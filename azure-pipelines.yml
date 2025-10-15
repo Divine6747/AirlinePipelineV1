@@ -1,31 +1,24 @@
-trigger:
-- master
-
-pool:
-  vmImage: 'windows-latest'
-
-variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  buildConfiguration: 'Release'
-
 steps:
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '8.0.x'
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'publish'
-      publishWebProjects: false
-      zipAfterPublish: false
-      modifyOutputPath: false
-      arguments: --output $(Build.ArtifactStagingDirectory)
-  
-  - task: PublishPipelineArtifact@1
-    inputs:
-      targetPath: '$(Build.ArtifactStagingDirectory)'
-      artifact: 'Airline'
-      publishLocation: 'pipeline'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/AirlineSYS.csproj'
 
-  
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: '**/AirlineSYS.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'Airline'
+    publishLocation: 'pipeline'
