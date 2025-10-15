@@ -1,3 +1,13 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  buildConfiguration: 'Release'
+
 steps:
 - task: UseDotNet@2
   inputs:
@@ -7,15 +17,16 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    projects: '**/AirlineSYS.csproj'
+    projects: 'AirlineSYS.csproj'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    projects: '**/AirlineSYS.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    projects: 'AirlineSYS.csproj'
+    publishWebProjects: false
     zipAfterPublish: false
     modifyOutputPath: false
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: PublishPipelineArtifact@1
   inputs:
