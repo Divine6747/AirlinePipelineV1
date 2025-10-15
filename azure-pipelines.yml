@@ -9,23 +9,21 @@ variables:
   buildConfiguration: 'Release'
   
 steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '8.0.x'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    zipAfterPublish: false
-    modifyOutputPath: false
-    arguments: --output $(Build.ArtifactStagingDirectory)
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'Airline'
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '9.0.10'
+  
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      publishWebProjects: false
+      zipAfterPublish: false
+      modifyOutputPath: false
+      arguments: --output $(Build.ArtifactStagingDirectory)
+  
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$((Build.ArtifactStagingDirectory)'
+      artifact: 'Airline'
+      publishLocation: 'pipeline'
