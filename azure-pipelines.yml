@@ -7,32 +7,45 @@ pool:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   buildConfiguration: 'Release'
+  artifactName: 'Airline'
 
 steps:
+
+# 1️ Install .NET 3.1 SDK
 - task: UseDotNet@2
+  displayName: 'Install .NET 3.1 SDK'
   inputs:
     packageType: 'sdk'
-    version: '8.0.x'
+    version: '3.1.426'       # Latest 3.1 LTS patch
     includePreviewVersions: false
 
+# 2️ Restore NuGet packages
 - task: NuGetCommand@2
+  displayName: 'Restore NuGet packages'
   inputs:
     restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
 
+# 3️ Build projects
 - task: DotNetCoreCLI@2
+  displayName: 'Build .NET projects'
   inputs:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
+# 4️ Publish projects to artifact staging directory
 - task: DotNetCoreCLI@2
+  displayName: 'Publish .NET projects'
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
+# 5️ Publish artifacts
 - task: PublishPipelineArtifact@1
+  displayName: 'Publish build artifacts'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'Airline'
+    artifact: '$(artifactName)'
     publishLocation: 'pipeline'
