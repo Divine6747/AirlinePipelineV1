@@ -7,23 +7,32 @@ pool:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   buildConfiguration: 'Release'
-  
+
 steps:
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '8.0.x'
-  
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
-      publishWebProjects: false
-      zipAfterPublish: false
-      modifyOutputPath: false
-      arguments: --output $(Build.ArtifactStagingDirectory)
-  
-  - task: PublishPipelineArtifact@1
-    inputs:
-      targetPath: '$((Build.ArtifactStagingDirectory)'
-      artifact: 'Airline'
-      publishLocation: 'pipeline'
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+    includePreviewVersions: false
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '**/*.sln'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'Airline'
+    publishLocation: 'pipeline'
