@@ -17,12 +17,9 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    projects: 'AirlinePipelineV1/AirlineSYS/AirlineSYS.csproj'
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    projects: 'AirlineSYS.csproj'
     publishWebProjects: false
     zipAfterPublish: false
     modifyOutputPath: false
@@ -32,4 +29,3 @@ steps:
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)'
     artifact: 'Airline'
-    publishLocation: 'pipeline'
